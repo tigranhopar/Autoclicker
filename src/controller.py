@@ -1,11 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
+import keyboard
 from autoclicker import AutoClicker
 
 class Controller:
-    def __init__(self, root=None):
+    def __init__(self, root=None, on_status_change=None):
         self.autoclicker = AutoClicker()
         self.mode = "interval"  # Default mode
+        self.hotkey = "f6"
+        self._hotkey_hook = None
+        self.on_status_change = on_status_change
+        self._register_hotkey()
         if root is not None:
             self.root = root
             self.create_widgets()
@@ -15,6 +20,29 @@ class Controller:
             self.autoclicker.stop()
         else:
             self.autoclicker.start()
+        if self.on_status_change:
+            self.on_status_change(self.autoclicker.running)
+
+    def _register_hotkey(self):
+        if self._hotkey_hook is not None:
+            keyboard.remove_hotkey(self._hotkey_hook)
+        self._hotkey_hook = keyboard.add_hotkey(self.hotkey, self.toggle_autoclicker)
+
+    def set_hotkey(self, hotkey):
+        hotkey = hotkey.strip()
+        if hotkey.startswith("F") and hotkey[1:].isdigit():
+            hotkey = hotkey.lower()
+        elif len(hotkey) == 1 and hotkey.isalpha():
+            hotkey = hotkey.lower()
+        if not hotkey or hotkey == self.hotkey:
+            return
+        self.hotkey = hotkey
+        self._register_hotkey()
+
+    def cleanup(self):
+        if self._hotkey_hook is not None:
+            keyboard.remove_hotkey(self._hotkey_hook)
+            self._hotkey_hook = None
 
     def create_widgets(self):
         self.root.title("Autoclicker GUI")

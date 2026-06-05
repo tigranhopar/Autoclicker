@@ -6,7 +6,7 @@ from autoclicker import AutoClicker
 def main():
     root = tk.Tk()
     root.title("autoclicker")
-    root.geometry("400x300")
+    root.geometry("560x330")
     root.configure(bg='white')
 
     create_ui(root)
