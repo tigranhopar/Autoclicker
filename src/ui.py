@@ -7,7 +7,7 @@ class AutoclickerUI:
         self.root = root
         self.root.title("AutoClicker")
         self.root.geometry("400x300")
-        self.root.configure(bg="#D3D3D3")
+        self.root.configure(bg="black")
 
         self.controller = Controller()
 
@@ -16,25 +16,21 @@ class AutoclickerUI:
         self.create_widgets()
 
     def create_widgets(self):
-        mode_frame = ttk.Frame(self.root)
+        mode_frame = tk.Frame(self.root, bg="black")
         mode_frame.pack(pady=10)
 
-        interval_button = ttk.Radiobutton(mode_frame, text="Interval", variable=self.mode_var, value="interval", command=self.update_mode)
-        interval_button.grid(row=0, column=0, padx=5)
+        self.mode_button = ttk.Button(mode_frame, text="Switch to Rate", command=self.toggle_mode)
+        self.mode_button.grid(row=0, column=0, padx=5)
 
-        rate_button = ttk.Radiobutton(mode_frame, text="Rate", variable=self.mode_var, value="rate", command=self.update_mode)
-        rate_button.grid(row=0, column=1, padx=5)
-
-        self.interval_frame = ttk.Frame(self.root)
-        self.interval_frame.pack(pady=10)
-
+        self.interval_frame = tk.Frame(self.root, bg="black")
         self.create_interval_widgets()
 
-        self.rate_frame = ttk.Frame(self.root)
-
+        self.rate_frame = tk.Frame(self.root, bg="black")
         self.create_rate_widgets()
 
-        button_frame = ttk.Frame(self.root)
+        self.update_mode()
+
+        button_frame = tk.Frame(self.root, bg="black")
         button_frame.pack(pady=20)
 
         toggle_button = ttk.Button(button_frame, text="Toggle Autoclicker", command=self.controller.toggle_autoclicker)
@@ -43,25 +39,34 @@ class AutoclickerUI:
         quit_button = ttk.Button(button_frame, text="Quit", command=self.root.quit)
         quit_button.grid(row=0, column=1, padx=5)
 
+    def toggle_mode(self):
+        if self.mode_var.get() == "interval":
+            self.mode_var.set("rate")
+            self.mode_button.config(text="Switch to Interval")
+        else:
+            self.mode_var.set("interval")
+            self.mode_button.config(text="Switch to Rate")
+        self.update_mode()
+
     def create_interval_widgets(self):
-        tk.Label(self.interval_frame, text="Hours:").grid(row=0, column=0)
+        tk.Label(self.interval_frame, text="Hours:", bg="black", fg="white").grid(row=0, column=0)
         self.hours_entry = tk.Entry(self.interval_frame, width=5)
         self.hours_entry.grid(row=0, column=1)
 
-        tk.Label(self.interval_frame, text="Minutes:").grid(row=0, column=2)
+        tk.Label(self.interval_frame, text="Minutes:", bg="black", fg="white").grid(row=0, column=2)
         self.minutes_entry = tk.Entry(self.interval_frame, width=5)
         self.minutes_entry.grid(row=0, column=3)
 
-        tk.Label(self.interval_frame, text="Seconds:").grid(row=0, column=4)
+        tk.Label(self.interval_frame, text="Seconds:", bg="black", fg="white").grid(row=0, column=4)
         self.seconds_entry = tk.Entry(self.interval_frame, width=5)
         self.seconds_entry.grid(row=0, column=5)
 
-        tk.Label(self.interval_frame, text="Milliseconds:").grid(row=0, column=6)
+        tk.Label(self.interval_frame, text="Milliseconds:", bg="black", fg="white").grid(row=0, column=6)
         self.milliseconds_entry = tk.Entry(self.interval_frame, width=5)
         self.milliseconds_entry.grid(row=0, column=7)
 
     def create_rate_widgets(self):
-        tk.Label(self.rate_frame, text="Rate:").grid(row=0, column=0)
+        tk.Label(self.rate_frame, text="Rate:", bg="black", fg="white").grid(row=0, column=0)
         self.rate_entry = tk.Entry(self.rate_frame, width=10)
         self.rate_entry.grid(row=0, column=1)
 
@@ -77,7 +82,10 @@ class AutoclickerUI:
             self.rate_frame.pack(pady=10)
             self.interval_frame.pack_forget()
 
+def create_ui(root):
+    return AutoclickerUI(root)
+
 if __name__ == "__main__":
     root = tk.Tk()
-    app = AutoclickerUI(root)
+    app = create_ui(root)
     root.mainloop()

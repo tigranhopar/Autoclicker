@@ -3,11 +3,18 @@ from tkinter import ttk
 from autoclicker import AutoClicker
 
 class Controller:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, root=None):
         self.autoclicker = AutoClicker()
         self.mode = "interval"  # Default mode
-        self.create_widgets()
+        if root is not None:
+            self.root = root
+            self.create_widgets()
+
+    def toggle_autoclicker(self):
+        if self.autoclicker.running:
+            self.autoclicker.stop()
+        else:
+            self.autoclicker.start()
 
     def create_widgets(self):
         self.root.title("Autoclicker GUI")
